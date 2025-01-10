@@ -1,71 +1,63 @@
 import streamlit as st
 import pandas as pd
 
-# Load the Excel file
-file_path = "AHP TOPSIS SAW.xlsx"
-
-# Ensure required library is installed for reading Excel files
-def load_sheet(sheet_name):
-    return pd.read_excel(file_path, sheet_name=sheet_name, engine="openpyxl")
-
 # Streamlit App
 st.title("Visualisasi Data AHP, TOPSIS, SAW, dan AVERAGE")
 
+# File Excel
+file_path = "AHP TOPSIS SAW.xlsx"
+
+# Load Excel file without external engine
+@st.cache_data
+def load_data(sheet_name):
+    return pd.read_excel(file_path, sheet_name=sheet_name)
+
 # Sheet 1: AHP Pembobotan
 st.header("1. AHP Pembobotan")
-bobot_df = load_sheet("AHP Pembobotan")
-
-if not bobot_df.empty:
-    st.write("### Data Bobot")
+try:
+    bobot_df = load_data("AHP Pembobotan")
     st.dataframe(bobot_df)
+except Exception as e:
+    st.error(f"Sheet 'AHP Pembobotan' tidak ditemukan: {e}")
 
 # Sheet 2: TOPSIS
 st.header("2. Perhitungan TOPSIS")
-topsis_df = load_sheet("TOPSIS")
-
-if not topsis_df.empty:
-    st.write("### Data TOPSIS")
+try:
+    topsis_df = load_data("TOPSIS")
     st.dataframe(topsis_df)
 
-    # Alternatif nilai tertinggi dan terendah
-    highest_alternative = topsis_df.iloc[topsis_df.iloc[:, 1].idxmax()]
-    lowest_alternative = topsis_df.iloc[topsis_df.iloc[:, 1].idxmin()]
-
-    st.write(f"### Alternatif dengan Nilai Tertinggi:")
-    st.write(highest_alternative)
-
-    st.write(f"### Alternatif dengan Nilai Terendah:")
-    st.write(lowest_alternative)
+    if not topsis_df.empty:
+        # Menampilkan alternatif nilai tertinggi dan terendah
+        st.write("### Alternatif Nilai Tertinggi dan Terendah")
+        highest = topsis_df.iloc[topsis_df.iloc[:, 1].idxmax()]
+        lowest = topsis_df.iloc[topsis_df.iloc[:, 1].idxmin()]
+        st.write("Alternatif Tertinggi:", highest)
+        st.write("Alternatif Terendah:", lowest)
+except Exception as e:
+    st.error(f"Sheet 'TOPSIS' tidak ditemukan: {e}")
 
 # Sheet 3: SAW
 st.header("3. Peringkat SAW")
-saw_df = load_sheet("SAW")
-
-if not saw_df.empty:
-    st.write("### Data Peringkat")
+try:
+    saw_df = load_data("SAW")
     st.dataframe(saw_df)
+except Exception as e:
+    st.error(f"Sheet 'SAW' tidak ditemukan: {e}")
 
 # Sheet 4: AVERAGE
 st.header("4. Peringkat Berdasarkan AVERAGE")
-average_df = load_sheet("AVERAGE")
-
-if not average_df.empty:
-    st.write("### Data AVERAGE")
+try:
+    average_df = load_data("AVERAGE")
     st.dataframe(average_df)
 
-    # Dropdown untuk memilih kriteria
-    selected_kriteria = st.selectbox("Pilih Kriteria untuk Penilaian:", average_df.columns[1:])
+    # Pilihan kriteria untuk penilaian
+    st.write("### Pilih Kriteria untuk Penilaian")
+    selected_kriteria = st.selectbox("Kriteria:", average_df.columns[1:], key="criteria")
 
     if selected_kriteria:
-        # Mengambil bobot dari sheet AHP Pembobotan
-        if selected_kriteria in bobot_df[bobot_df.columns[0]].values:
-            bobot_kriteria = bobot_df.loc[bobot_df[bobot_df.columns[0]] == selected_kriteria, bobot_df.columns[1]].values[0]
-        else:
-            bobot_kriteria = 1  # Default jika tidak ada bobot yang ditemukan
-
-        # Menghitung nilai akhir dengan pembobotan
-        average_df["Nilai Akhir"] = average_df[selected_kriteria] * bobot_kriteria
-        sorted_average_df = average_df.sort_values(by="Nilai Akhir", ascending=False)
-
-        st.write(f"### Peringkat Alternatif Berdasarkan: {selected_kriteria}")
-        st.dataframe(sorted_average_df[[average_df.columns[0], "Nilai Akhir"]])
+        # Menghitung nilai akhir
+        st.write(f"### Peringkat Berdasarkan: {selected_kriteria}")
+        sorted_df = average_df.sort_values(by=selected_kriteria, ascending=False)
+        st.dataframe(sorted_df[[average_df.columns[0], selected_kriteria]])
+except Exception as e:
+    st.error(f"Sheet 'AVERAGE' tidak ditemukan: {e}")
