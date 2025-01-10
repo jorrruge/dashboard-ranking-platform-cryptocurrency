@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
 # Load the Excel file
 file_path = "AHP TOPSIS SAW.xlsx"
@@ -47,15 +46,6 @@ if not saw_df.empty:
     st.write("### Data Peringkat")
     st.dataframe(saw_df)
 
-    # Visualisasi Diagram Batang
-    st.write("### Diagram Batang Peringkat")
-    fig, ax = plt.subplots()
-    ax.bar(saw_df[saw_df.columns[0]], saw_df[saw_df.columns[1]])
-    ax.set_title("Peringkat Alternatif")
-    ax.set_xlabel(saw_df.columns[0])
-    ax.set_ylabel(saw_df.columns[1])
-    st.pyplot(fig)
-
 # Sheet 4: AVERAGE
 st.header("4. Peringkat Berdasarkan AVERAGE")
 average_df = load_sheet("AVERAGE")
@@ -80,12 +70,3 @@ if not average_df.empty:
 
         st.write(f"### Peringkat Alternatif Berdasarkan: {selected_kriteria}")
         st.dataframe(sorted_average_df[[average_df.columns[0], "Nilai Akhir"]])
-
-        # Visualisasi diagram batang
-        st.write("### Diagram Batang Peringkat Berdasarkan Kriteria")
-        fig, ax = plt.subplots()
-        ax.bar(sorted_average_df[average_df.columns[0]], sorted_average_df["Nilai Akhir"])
-        ax.set_title(f"Peringkat Berdasarkan {selected_kriteria}")
-        ax.set_xlabel(average_df.columns[0])
-        ax.set_ylabel("Nilai Akhir")
-        st.pyplot(fig)
