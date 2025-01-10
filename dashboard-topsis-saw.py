@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
 # Load the Excel file
 file_path = "AHP TOPSIS SAW.xlsx"
@@ -46,11 +45,6 @@ saw_df = load_sheet("SAW")
 if not saw_df.empty:
     st.write("### Data Peringkat")
     st.dataframe(saw_df)
-
-    # Visualisasi Diagram Batang
-    st.write("### Diagram Batang Peringkat")
-    fig = px.bar(saw_df, x=saw_df.columns[0], y=saw_df.columns[1], title="Peringkat Alternatif")
-    st.plotly_chart(fig)
 
 # Sheet 4: AVERAGE
 st.header("4. Peringkat Berdasarkan AVERAGE")
