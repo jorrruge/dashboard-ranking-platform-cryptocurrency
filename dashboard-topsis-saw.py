@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import matplotlib.pyplot as plt
 
 # Load the Excel file
 file_path = "AHP TOPSIS SAW.xlsx"
@@ -49,8 +49,12 @@ if not saw_df.empty:
 
     # Visualisasi Diagram Batang
     st.write("### Diagram Batang Peringkat")
-    fig = px.bar(saw_df, x=saw_df.columns[0], y=saw_df.columns[1], title="Peringkat Alternatif")
-    st.plotly_chart(fig)
+    fig, ax = plt.subplots()
+    ax.bar(saw_df[saw_df.columns[0]], saw_df[saw_df.columns[1]])
+    ax.set_title("Peringkat Alternatif")
+    ax.set_xlabel(saw_df.columns[0])
+    ax.set_ylabel(saw_df.columns[1])
+    st.pyplot(fig)
 
 # Sheet 4: AVERAGE
 st.header("4. Peringkat Berdasarkan AVERAGE")
@@ -79,5 +83,9 @@ if not average_df.empty:
 
         # Visualisasi diagram batang
         st.write("### Diagram Batang Peringkat Berdasarkan Kriteria")
-        fig = px.bar(sorted_average_df, x=average_df.columns[0], y="Nilai Akhir", title=f"Peringkat Berdasarkan {selected_kriteria}")
-        st.plotly_chart(fig)
+        fig, ax = plt.subplots()
+        ax.bar(sorted_average_df[average_df.columns[0]], sorted_average_df["Nilai Akhir"])
+        ax.set_title(f"Peringkat Berdasarkan {selected_kriteria}")
+        ax.set_xlabel(average_df.columns[0])
+        ax.set_ylabel("Nilai Akhir")
+        st.pyplot(fig)
