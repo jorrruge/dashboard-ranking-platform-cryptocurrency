@@ -3,11 +3,10 @@ import pandas as pd
 
 # Load the Excel file
 file_path = "AHP TOPSIS SAW.xlsx"
-excel_data = pd.ExcelFile(file_path)
 
-# Function to load a specific sheet
+# Ensure required library is installed for reading Excel files
 def load_sheet(sheet_name):
-    return pd.read_excel(file_path, sheet_name=sheet_name)
+    return pd.read_excel(file_path, sheet_name=sheet_name, engine="openpyxl")
 
 # Streamlit App
 st.title("Visualisasi Data AHP, TOPSIS, SAW, dan AVERAGE")
